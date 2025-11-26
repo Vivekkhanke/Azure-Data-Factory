@@ -61,7 +61,17 @@
 							"typeProperties": {
 								"dataset": {
 									"referenceName": "DS_GetMetadataactivity_Source",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"testschemaname": {
+											"value": "@item().schemaname",
+											"type": "Expression"
+										},
+										"testtablename": {
+											"value": "@item().tablename",
+											"type": "Expression"
+										}
+									}
 								},
 								"fieldList": [
 									"exists"
