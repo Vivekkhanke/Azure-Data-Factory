@@ -128,7 +128,17 @@
 										"inputs": [
 											{
 												"referenceName": "DS_Copy_Azure_SQL_Source",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"schemaname": {
+														"value": "@item().schemaname",
+														"type": "Expression"
+													},
+													"tablename": {
+														"value": "@item().tablename",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
