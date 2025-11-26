@@ -1,0 +1,9 @@
+{
+	"name": "javaappfactorypipelines",
+	"location": "westus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "f9203b88-3d34-4095-b776-fc144a9181dd",
+		"tenantId": "a891e8ab-0ade-4a68-a4ce-6f576fea50bc"
+	}
+}
