@@ -85,6 +85,17 @@
 									"value": "@equals(activity('Get Metadata1').output.exists,true)",
 									"type": "Expression"
 								},
+								"ifFalseActivities": [
+									{
+										"name": "Wait1",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 60
+										}
+									}
+								],
 								"ifTrueActivities": [
 									{
 										"name": "Copy data1",
@@ -144,7 +155,13 @@
 										"outputs": [
 											{
 												"referenceName": "DS_ADLS_Gen2_Sink",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"foldername": {
+														"value": "@item().foldername",
+														"type": "Expression"
+													}
+												}
 											}
 										]
 									}
