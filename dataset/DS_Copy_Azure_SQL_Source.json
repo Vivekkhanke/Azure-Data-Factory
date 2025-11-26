@@ -1,0 +1,12 @@
+{
+	"name": "DS_Copy_Azure_SQL_Source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Azure_SQL_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
