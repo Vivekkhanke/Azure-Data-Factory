@@ -1,0 +1,10 @@
+{
+	"name": "LS_Azure_Key_Vault",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-data-engine-secret.vault.azure.net/"
+		}
+	}
+}
