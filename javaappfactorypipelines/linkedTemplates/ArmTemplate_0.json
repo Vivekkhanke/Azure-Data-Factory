@@ -457,97 +457,72 @@
 							},
 							"activities": [
 								{
-									"name": "If Condition1",
-									"type": "IfCondition",
+									"name": "SQL Server to ADLS Gen2",
+									"type": "Copy",
 									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
-										"expression": {
-											"value": "@equals(activity('Lookup1').output.value,true)",
-											"type": "Expression"
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
 										},
-										"ifFalseActivities": [
-											{
-												"name": "Wait1",
-												"type": "Wait",
-												"dependsOn": [],
-												"userProperties": [],
-												"typeProperties": {
-													"waitTimeInSeconds": 60
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".csv"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_Copy_Azure_SQL_Source",
+											"type": "DatasetReference",
+											"parameters": {
+												"schemaname": {
+													"value": "@item().schemaname",
+													"type": "Expression"
+												},
+												"tablename": {
+													"value": "@item().tablename",
+													"type": "Expression"
 												}
 											}
-										],
-										"ifTrueActivities": [
-											{
-												"name": "Copy data1",
-												"type": "Copy",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "0.12:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "AzureSqlSource",
-														"queryTimeout": "02:00:00",
-														"partitionOption": "None"
-													},
-													"sink": {
-														"type": "DelimitedTextSink",
-														"storeSettings": {
-															"type": "AzureBlobFSWriteSettings"
-														},
-														"formatSettings": {
-															"type": "DelimitedTextWriteSettings",
-															"quoteAllText": true,
-															"fileExtension": ".csv"
-														}
-													},
-													"enableStaging": false,
-													"translator": {
-														"type": "TabularTranslator",
-														"typeConversion": true,
-														"typeConversionSettings": {
-															"allowDataTruncation": true,
-															"treatBooleanAsNumber": false
-														}
-													}
-												},
-												"inputs": [
-													{
-														"referenceName": "DS_Copy_Azure_SQL_Source",
-														"type": "DatasetReference",
-														"parameters": {
-															"schemaname": {
-																"value": "@item().schemaname",
-																"type": "Expression"
-															},
-															"tablename": {
-																"value": "@item().tablename",
-																"type": "Expression"
-															}
-														}
-													}
-												],
-												"outputs": [
-													{
-														"referenceName": "DS_ADLS_Gen2_Sink",
-														"type": "DatasetReference",
-														"parameters": {
-															"foldername": {
-																"value": "@item().foldername",
-																"type": "Expression"
-															}
-														}
-													}
-												]
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_ADLS_Gen2_Sink",
+											"type": "DatasetReference",
+											"parameters": {
+												"foldername": {
+													"value": "@item().tablename",
+													"type": "Expression"
+												}
 											}
-										]
-									}
+										}
+									]
 								}
 							]
 						}
