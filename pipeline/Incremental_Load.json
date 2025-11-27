@@ -47,7 +47,7 @@
 					},
 					"activities": [
 						{
-							"name": "Lookup_max_value",
+							"name": "Lookup_max_value in every table",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -77,7 +77,7 @@
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "Lookup_max_value",
+									"activity": "Lookup_max_value in every table",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -159,7 +159,30 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[metadata_usp]",
+								"storedProcedureParameters": {
+									"LPV": {
+										"value": {
+											"value": "@activity('Lookup_max_value in every table').output.firstRow.maxvalue",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"tablename": {
+										"value": {
+											"value": "@item().tablename",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_Azure_SQL_Source",
+								"type": "LinkedServiceReference"
+							}
 						}
 					]
 				}
