@@ -42,7 +42,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Metadata').output.value",
+						"value": "@activity('lookup1').output.value",
 						"type": "Expression"
 					},
 					"activities": [
