@@ -224,6 +224,140 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Full_Load_exercise')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM METADATA where isdisable=0;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_Lookup_Azure_SQL_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "SQL Server to ADLS Gen2",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".csv"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_Copy_Azure_SQL_Source",
+											"type": "DatasetReference",
+											"parameters": {
+												"schemaname": {
+													"value": "@item().schemaname",
+													"type": "Expression"
+												},
+												"tablename": {
+													"value": "@item().tablename",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_ADLS_Gen2_Sink",
+											"type": "DatasetReference",
+											"parameters": {
+												"foldername": {
+													"value": "@item().tablename",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_Lookup_Azure_SQL_Source')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Copy_Azure_SQL_Source')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_Gen2_Sink')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_ADLS_Gen2_Sink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -436,13 +570,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Full_Load_exercise')]",
+			"name": "[concat(parameters('factoryName'), '/Incremental_Load')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Lookup1",
+						"name": "lookup1",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
@@ -456,7 +590,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT * FROM METADATA where isdisable=0;",
+								"sqlReaderQuery": "SELECT * FROM METADATA",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -473,7 +607,7 @@
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Lookup1",
+								"activity": "lookup1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -482,13 +616,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Lookup1').output.value",
+								"value": "@activity('lookup1').output.value",
 								"type": "Expression"
 							},
 							"activities": [
 								{
-									"name": "SQL Server to ADLS Gen2",
-									"type": "Copy",
+									"name": "Lookup_max_value",
+									"type": "Lookup",
 									"dependsOn": [],
 									"policy": {
 										"timeout": "0.12:00:00",
@@ -501,58 +635,17 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
+											"sqlReaderQuery": "select max(@{item().deltacol}) as maxvalue from @{item().schemaname}.@{item().tablename}",
 											"queryTimeout": "02:00:00",
 											"partitionOption": "None"
 										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".csv"
-											}
+										"dataset": {
+											"referenceName": "DS_Inc_Load_Lookup_max_SQL",
+											"type": "DatasetReference",
+											"parameters": {}
 										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "DS_Copy_Azure_SQL_Source",
-											"type": "DatasetReference",
-											"parameters": {
-												"schemaname": {
-													"value": "@item().schemaname",
-													"type": "Expression"
-												},
-												"tablename": {
-													"value": "@item().tablename",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "DS_ADLS_Gen2_Sink",
-											"type": "DatasetReference",
-											"parameters": {
-												"foldername": {
-													"value": "@item().tablename",
-													"type": "Expression"
-												}
-											}
-										}
-									]
+										"firstRowOnly": false
+									}
 								}
 							]
 						}
@@ -561,12 +654,31 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"annotations": [
+					"Incremental load"
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_Lookup_Azure_SQL_Source')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Copy_Azure_SQL_Source')]",
-				"[concat(variables('factoryId'), '/datasets/DS_ADLS_Gen2_Sink')]"
+				"[concat(variables('factoryId'), '/datasets/DS_Inc_Load_Lookup_max_SQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Inc_Load_Lookup_max_SQL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL_Source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
 			]
 		}
 	]
