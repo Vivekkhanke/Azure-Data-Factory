@@ -1,0 +1,83 @@
+{
+	"name": "Incremental_Load",
+	"properties": {
+		"activities": [
+			{
+				"name": "lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM METADATA",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_Lookup_Azure_SQL_Source",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Metadata').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Lookup_max_value",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "select max(@{item().deltacol}) as maxvalue from @{item().schemaname}.@{item().tablename}",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_Inc_Load_Lookup_max_SQL",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": false
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [
+			"Incremental load"
+		]
+	}
+}

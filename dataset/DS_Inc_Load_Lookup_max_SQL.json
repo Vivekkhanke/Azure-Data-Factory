@@ -1,0 +1,12 @@
+{
+	"name": "DS_Inc_Load_Lookup_max_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Azure_SQL_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
