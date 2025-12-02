@@ -1,0 +1,51 @@
+Employee_ID,First_Name,Last_Name,Email,Department,Job_Title,Salary,Date_of_Joining,City,Country
+1,Logan,Ramirez,barreraaustin@yahoo.com,Operations,Analyst,34754,31-10-2015,North Laura,Djibouti
+2,Cynthia,Ho,charles76@welch-martinez.com,Operations,Manager,57777,07-09-2017,Weaverchester,Afghanistan
+3,Morgan,Sanchez,mary76@gmail.com,Marketing,Consultant,67202,29-05-2025,Glennchester,French Polynesia
+4,Garrett,Hart,martinlisa@gmail.com,Sales,Executive,121349,28-10-2019,Ramseyhaven,Venezuela
+5,James,White,laceywilson@foster-austin.biz,HR,Consultant,110538,30-09-2025,Davidberg,Turkmenistan
+6,Dawn,Mitchell,martinezjoseph@hotmail.com,IT,Analyst,43398,12-04-2024,West Jessicaland,United Arab Emirates
+7,Darlene,Moore,zcohen@haley.com,Marketing,Assistant,40222,21-10-2021,Lake Dianastad,Nigeria
+8,Laura,Clayton,cruzmary@yahoo.com,IT,Engineer,77130,23-12-2022,West Katelynberg,Bangladesh
+9,Richard,Stone,amberdawson@yahoo.com,HR,Assistant,38396,22-09-2017,Phillipfurt,Chile
+10,Angelica,Strong,robert94@yahoo.com,Sales,Consultant,82677,20-07-2018,Port Teresaberg,British Virgin Islands
+11,Christopher,Martinez,tbraun@beltran-gonzales.biz,Marketing,Assistant,104978,21-07-2017,Charlesshire,Togo
+12,Brian,Price,briangarcia@rivers.net,Operations,Executive,102983,12-05-2017,New Douglasview,Seychelles
+13,Daniel,Santiago,xthomas@gmail.com,IT,Analyst,50200,06-11-2022,Susanfort,Hong Kong
+14,Nathaniel,Gibson,frank79@gmail.com,Sales,Analyst,144277,24-08-2018,Lake Kylemouth,Namibia
+15,Crystal,Carpenter,bruce36@yahoo.com,IT,Executive,61540,12-10-2019,East Karen,Brazil
+16,Cory,Morales,marcuswise@robertson-hicks.com,HR,Executive,80605,19-07-2016,West Tonyfurt,Myanmar
+17,Justin,Braun,roberttorres@gmail.com,IT,Executive,119576,18-07-2021,Lake Seanborough,Morocco
+18,Eric,Aguirre,cbooth@green-robinson.com,Sales,Engineer,118414,04-07-2024,Grayfurt,French Polynesia
+19,Angela,Hoffman,stephanie74@gmail.com,Marketing,Manager,117214,02-08-2022,West Timothy,Uzbekistan
+20,Allen,Jackson,kennethmitchell@knight.com,Operations,Assistant,93444,29-10-2017,Peterstown,British Indian Ocean Territory (Chagos Archipelago)
+21,Michael,Fleming,christopherrussell@sawyer.com,Finance,Manager,32816,27-01-2018,West Stephaniehaven,Slovakia (Slovak Republic)
+22,Joseph,Spencer,perezelizabeth@perry.com,Operations,Consultant,117079,22-04-2020,North Jennifer,Western Sahara
+23,Brian,Anderson,paulkelley@hotmail.com,Sales,Engineer,53390,11-12-2019,East Andrew,Niger
+24,Holly,Gay,georgeward@hendricks.com,Operations,Executive,112996,25-12-2015,Port Heatherview,Bangladesh
+25,Ronald,Bailey,martinkelly@martinez.com,Operations,Assistant,116497,21-09-2025,West Brandonport,Kenya
+26,Luis,Goodwin,mossmark@rodgers.com,IT,Consultant,131488,02-12-2022,West Gregory,Cape Verde
+27,Donna,Roth,aguerrero@hotmail.com,HR,Analyst,41721,03-02-2023,Deniseview,Yemen
+28,Tanya,Hart,sherry17@gmail.com,Marketing,Analyst,33809,05-11-2023,Smallborough,Togo
+29,Priscilla,Tucker,robertjoyce@gmail.com,Finance,Consultant,46668,22-10-2022,Lake Felicia,Argentina
+30,Lori,Campbell,joycehart@medina.com,Finance,Executive,149439,15-10-2021,Wandaburgh,Australia
+31,Michelle,Reyes,james53@gmail.com,Operations,Engineer,110411,12-07-2025,Heathport,Christmas Island
+32,Brandon,Sanchez,idalton@yahoo.com,HR,Consultant,114912,13-03-2024,New Jacobport,Slovenia
+33,Jack,Bass,zstewart@long.info,Marketing,Engineer,120637,05-04-2016,North Julieview,Eritrea
+34,David,Douglas,robert19@gmail.com,Marketing,Assistant,148857,20-10-2018,Blakebury,Lesotho
+35,Michelle,Lam,saraandrews@brown.com,Sales,Manager,124361,26-02-2020,West Annburgh,Saudi Arabia
+36,Kathryn,Mcconnell,rogersandrew@hotmail.com,Sales,Assistant,119761,13-01-2023,Port Toddport,Burkina Faso
+37,Gary,Holt,awilliams@collins-montoya.biz,Sales,Consultant,32935,03-05-2024,Travisside,Sierra Leone
+38,James,Huffman,dorothybautista@gmail.com,HR,Engineer,75044,24-12-2019,Davidstad,Romania
+39,Charles,Wagner,reynoldsdebra@hotmail.com,Finance,Executive,80957,15-08-2019,Gonzalesfort,Turks and Caicos Islands
+40,Matthew,Romero,dennismoore@gmail.com,Sales,Consultant,117089,13-01-2018,West Sean,Bhutan
+41,Alexandria,Whitaker,mckenzietravis@tucker-rhodes.com,Operations,Manager,54792,04-07-2022,Mitchellville,Puerto Rico
+42,Joshua,Dennis,sethwatson@yahoo.com,Marketing,Assistant,88452,24-06-2023,New Adam,French Southern Territories
+43,Adrienne,Moore,davidsuarez@yahoo.com,IT,Executive,72601,17-06-2019,North Cassandra,Switzerland
+44,Tyler,Phelps,amber07@yahoo.com,Marketing,Consultant,80714,04-05-2018,Millerland,Lebanon
+45,Jessica,Montgomery,tinawright@hotmail.com,Marketing,Analyst,95732,17-04-2020,North Stephanie,Grenada
+46,Robert,Thomas,zberry@hotmail.com,IT,Executive,53390,23-12-2020,New Jessicaburgh,Belize
+47,Richard,Frazier,tclements@reyes.com,Operations,Manager,123113,30-07-2021,Juanville,Lebanon
+48,David,Mora,samantha00@gmail.com,IT,Executive,87935,09-09-2018,Gregoryburgh,Central African Republic
+49,Scott,White,michael07@hotmail.com,HR,Consultant,68705,14-01-2018,Lake Nicholas,Turkey
+50,James,Ali,joan11@hotmail.com,Operations,Assistant,135768,23-11-2021,Charlesfurt,Belize
