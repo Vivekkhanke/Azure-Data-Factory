@@ -1,0 +1,16 @@
+{
+	"name": "DS_AzureSQL_Sink_TopMost",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Azure_SQL_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TopMost"
+		}
+	}
+}

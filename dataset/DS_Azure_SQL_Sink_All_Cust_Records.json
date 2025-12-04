@@ -1,0 +1,16 @@
+{
+	"name": "DS_Azure_SQL_Sink_All_Cust_Records",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Azure_SQL_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "CreditScore_insert"
+		}
+	}
+}
