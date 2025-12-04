@@ -38,6 +38,27 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Azure-IR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 32,
+							"timeToLive": 10,
+							"cleanup": false,
+							"customProperties": []
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LS_ADLSGen2_Sink')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -119,6 +140,128 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_AzureSQL_Sink_TopMost')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL_Source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TopMost"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_AzureSQL_Source_Credit_Score_CTE')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL_Source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Credit_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Card_Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Credit_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Credit_score",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "CreditScore"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Azure_SQL_Sink_All_Cust_Records')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL_Source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "CreditScore_insert"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Azure_SQL_Sink_Rejected_records')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL_Source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Credit_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Card_Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Credit_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Credit_score",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "rejected_records"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Copy_Azure_SQL_Source')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -189,7 +332,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Lookup_Azure_SQL_Source')]",
+			"name": "[concat(parameters('factoryName'), '/DS_Inc_Load_Azure_SQL_Copy')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -208,24 +351,6 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DS_Inc_Load_Lookup_max_SQL')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Azure_SQL_Source",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Inc_Load_Azure_SQL_Copy')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -276,6 +401,24 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_ADLSGen2_Sink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Lookup_Azure_SQL_Source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL_Source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
 			]
 		},
 		{
@@ -677,7 +820,10 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"sqlReaderQuery": "select max(@{item().deltacol}) as maxvalue from @{item().schemaname}.@{item().tablename}",
+											"sqlReaderQuery": {
+												"value": "select max(@{item().deltacol}) as maxvalue from @{item().schemaname}.@{item().tablename}",
+												"type": "Expression"
+											},
 											"queryTimeout": "02:00:00",
 											"partitionOption": "None"
 										},
@@ -819,6 +965,152 @@
 				"[concat(variables('factoryId'), '/datasets/DS_Inc_Load_Azure_SQL_Copy')]",
 				"[concat(variables('factoryId'), '/datasets/DS_Inc_Load_Sink_Gen2')]",
 				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Demove_Duplicate_records')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DS_AzureSQL_Source_Credit_Score_CTE",
+								"type": "DatasetReference"
+							},
+							"name": "CreditScoreTable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DS_Azure_SQL_Sink_Rejected_records",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "RowNumberGenerate",
+							"description": "Assigned the row number to each records"
+						},
+						{
+							"name": "DuplicateRecords",
+							"description": "Filter : Shows duplicate records"
+						},
+						{
+							"name": "SelectColumns",
+							"description": "Remove row_number column."
+						},
+						{
+							"name": "SortedData",
+							"description": "Sorting rows on columns 'Credit_ID' in Ascending order"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Credit_ID as integer,",
+						"          Card_Type as string,",
+						"          Credit_Name as string,",
+						"          Credit_score as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     partitionBy('hash', 1)) ~> CreditScoreTable",
+						"CreditScoreTable window(over(Card_Type,",
+						"          Credit_Name,",
+						"          Credit_score),",
+						"     desc(Credit_ID, true),",
+						"     Row_number = rowNumber(),",
+						"     partitionBy('hash', 1)) ~> RowNumberGenerate",
+						"RowNumberGenerate filter(greaterOrEqual(Row_number,2),",
+						"     partitionBy('hash', 1)) ~> DuplicateRecords",
+						"DuplicateRecords select(mapColumn(",
+						"          Credit_ID,",
+						"          Card_Type,",
+						"          Credit_Name,",
+						"          Credit_score",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"SelectColumns sort(asc(Credit_ID, true),",
+						"     partitionBy('hash', 1)) ~> SortedData",
+						"SortedData sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Credit_ID as integer,",
+						"          Card_Type as string,",
+						"          Credit_Name as string,",
+						"          Credit_score as integer",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_AzureSQL_Source_Credit_Score_CTE')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Azure_SQL_Sink_Rejected_records')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DF_Remove_duplicate",
+						"description": "Call DF_Remove_Duplicate_records data flow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_Demove_Duplicate_records",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"CreditScoreTable": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Demove_Duplicate_records')]"
 			]
 		}
 	]
