@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "DF_Demove_Duplicate_records",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
