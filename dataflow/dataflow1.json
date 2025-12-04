@@ -1,0 +1,93 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AzureSQL_Source_Credit_Score_CTE",
+						"type": "DatasetReference"
+					},
+					"name": "CreditScoreTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Azure_SQL_Sink_Rejected_records",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RowNumberGenerate",
+					"description": "Assigned the row number to each records"
+				},
+				{
+					"name": "DuplicateRecords",
+					"description": "Filter : Shows duplicate records"
+				},
+				{
+					"name": "SelectColumns",
+					"description": "Remove row_number column."
+				},
+				{
+					"name": "SortedData",
+					"description": "Sorting rows on columns 'Credit_ID' in Ascending order"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Credit_ID as integer,",
+				"          Card_Type as string,",
+				"          Credit_Name as string,",
+				"          Credit_score as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> CreditScoreTable",
+				"CreditScoreTable window(over(Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score),",
+				"     desc(Credit_ID, true),",
+				"     Row_number = rowNumber(),",
+				"     partitionBy('hash', 1)) ~> RowNumberGenerate",
+				"RowNumberGenerate filter(greaterOrEqual(Row_number,2),",
+				"     partitionBy('hash', 1)) ~> DuplicateRecords",
+				"DuplicateRecords select(mapColumn(",
+				"          Credit_ID,",
+				"          Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"SelectColumns sort(asc(Credit_ID, true),",
+				"     partitionBy('hash', 1)) ~> SortedData",
+				"SortedData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Credit_ID as integer,",
+				"          Card_Type as string,",
+				"          Credit_Name as string,",
+				"          Credit_score as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
