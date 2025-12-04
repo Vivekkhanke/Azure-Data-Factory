@@ -1,0 +1,35 @@
+{
+	"name": "DS_AzureSQL_Source_Credit_Score_CTE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Azure_SQL_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Credit_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Card_Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Credit_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Credit_score",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "CreditScore"
+		}
+	}
+}
