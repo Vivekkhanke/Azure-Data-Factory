@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "Windows_Transform_Pipeline",
 	"properties": {
 		"activities": [
 			{
