@@ -1,0 +1,203 @@
+{
+	"name": "DF_TopMost_DuplicatedRejected_AllCleanedData",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AzureSQL_Source_Credit_Score_CTE",
+						"type": "DatasetReference"
+					},
+					"name": "CredtiScoreTableDetails"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Azure_SQL_Sink_Rejected_records",
+						"type": "DatasetReference"
+					},
+					"name": "RejectedDuplicatedRecords",
+					"description": "Rejected Duplicated Records in rejected Table.\nExport data to DS_Azure_SQL_Sink_Rejected_records"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_AzureSQL_Sink_TopMost",
+						"type": "DatasetReference"
+					},
+					"name": "TopMostCreditScoreData"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Azure_SQL_Sink_All_Cust_Records",
+						"type": "DatasetReference"
+					},
+					"name": "LoadedAllCleanData"
+				}
+			],
+			"transformations": [
+				{
+					"name": "windowsRowNumGenerate",
+					"description": "TO generate row number"
+				},
+				{
+					"name": "DuplicateValuesFilter",
+					"description": "show duplicate records \nLogic = rownum >1"
+				},
+				{
+					"name": "select1",
+					"description": "select with columns 'Credit_ID, Card_Type, Credit_Name, Credit_score' only\nRemove rownum column"
+				},
+				{
+					"name": "SortedData"
+				},
+				{
+					"name": "UniqueRecords",
+					"description": "Fetched unique records.\nrownumber = 1"
+				},
+				{
+					"name": "SelectedColumns",
+					"description": "Fetched columns except rownumber column"
+				},
+				{
+					"name": "windowsFunction",
+					"description": "Fetched Rank(), DenseRank() \nRowNumber()."
+				},
+				{
+					"name": "sortedBasedOnDenseRank",
+					"description": "Sorted based on DenseRank in Asc order\n"
+				},
+				{
+					"name": "TopMostRecords",
+					"description": "Conditional Split:\nTopers credit score in Toppers Table.\nAll data in All customer table\n"
+				},
+				{
+					"name": "SelectOnly4Columns",
+					"description": "Renaming TopMostRecords@TopMost to SelectOnly4Columns with columns 'Credit_ID, Card_Type, Credit_Name, Credit_score"
+				},
+				{
+					"name": "selectAllData"
+				},
+				{
+					"name": "sortedAllData",
+					"description": "Sorting rows on columns 'Credit_ID "
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Credit_ID as integer,",
+				"          Card_Type as string,",
+				"          Credit_Name as string,",
+				"          Credit_score as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> CredtiScoreTableDetails",
+				"CredtiScoreTableDetails window(over(Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score),",
+				"     asc(Credit_ID, true),",
+				"     Row_Number = rowNumber(),",
+				"     partitionBy('hash', 1)) ~> windowsRowNumGenerate",
+				"windowsRowNumGenerate filter(greaterOrEqual(Row_Number,2),",
+				"     partitionBy('hash', 1)) ~> DuplicateValuesFilter",
+				"DuplicateValuesFilter select(mapColumn(",
+				"          Credit_ID,",
+				"          Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sort(asc(Credit_ID, true),",
+				"     partitionBy('hash', 1)) ~> SortedData",
+				"windowsRowNumGenerate filter(equals(Row_Number,1),",
+				"     partitionBy('hash', 1)) ~> UniqueRecords",
+				"UniqueRecords select(mapColumn(",
+				"          Credit_ID,",
+				"          Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectedColumns",
+				"SelectedColumns window(over(Card_Type),",
+				"     desc(Credit_score, true),",
+				"     Rank = rank(),",
+				"          DenseRank = denseRank(),",
+				"          Rownumber = rowNumber(),",
+				"     partitionBy('hash', 1)) ~> windowsFunction",
+				"windowsFunction sort(asc(DenseRank, true),",
+				"     partitionBy('hash', 1)) ~> sortedBasedOnDenseRank",
+				"sortedBasedOnDenseRank split(equals(DenseRank,1),",
+				"     disjoint: false) ~> TopMostRecords@(TopMost, AllCustomers)",
+				"TopMostRecords@TopMost select(mapColumn(",
+				"          Credit_ID,",
+				"          Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectOnly4Columns",
+				"sortedAllData select(mapColumn(",
+				"          Credit_ID,",
+				"          Card_Type,",
+				"          Credit_Name,",
+				"          Credit_score",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectAllData",
+				"TopMostRecords@AllCustomers sort(asc(Credit_ID, true),",
+				"     partitionBy('hash', 1)) ~> sortedAllData",
+				"SortedData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Credit_ID as integer,",
+				"          Card_Type as string,",
+				"          Credit_Name as string,",
+				"          Credit_score as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> RejectedDuplicatedRecords",
+				"SelectOnly4Columns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> TopMostCreditScoreData",
+				"selectAllData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> LoadedAllCleanData"
+			]
+		}
+	}
+}

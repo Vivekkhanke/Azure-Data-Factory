@@ -10,7 +10,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "CreditScore_insert"
+			"table": "All_CustomersCreditScore"
 		}
 	}
 }
