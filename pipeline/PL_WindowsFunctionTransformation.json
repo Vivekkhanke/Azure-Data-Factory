@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DataFlow1",
+				"name": "CreditScore_Data",
 				"description": "Calling the data flow which is transforming the Tope most credit score customer records, Duplicate rejected records and all customers data.",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
