@@ -17,7 +17,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_Demove_Duplicate_records",
+						"referenceName": "DF_Rejected_Duplicate_records_in_seperate_table",
 						"type": "DataFlowReference"
 					},
 					"compute": {
