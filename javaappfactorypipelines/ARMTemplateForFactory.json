@@ -18,6 +18,18 @@
 		"LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "sqlconnectionstring"
+		},
+		"LS_Project_kv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-secrets-data.vault.azure.net/"
+		},
+		"LS_Project_Gen2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://storageaccdataloadtest.dfs.core.windows.net"
+		},
+		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "sqlconnectionString"
 		}
 	},
 	"variables": {
@@ -571,6 +583,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_WindowsFunctionTransformation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CreditScore_Data",
+						"description": "Calling the data flow which is transforming the Tope most credit score customer records, Duplicate rejected records and all customers data.",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_TopMost_DuplicatedRejected_AllCleanedData",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"CredtiScoreTableDetails": {},
+									"RejectedDuplicatedRecords": {},
+									"TopMostCreditScoreData": {},
+									"LoadedAllCleanData": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_TopMost_DuplicatedRejected_AllCleanedData')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Windows_Transform_Pipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -994,27 +1055,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Azure-IR')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "AutoResolve",
-						"dataFlowProperties": {
-							"computeType": "General",
-							"coreCount": 32,
-							"timeToLive": 10,
-							"cleanup": false,
-							"customProperties": []
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DF_Rejected_Duplicate_records_in_seperate_table')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1325,15 +1365,72 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_WindowsFunctionTransformation')]",
+			"name": "[concat(parameters('factoryName'), '/LS_Project_kv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LS_Project_kv_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Project_Gen2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_Project_Gen2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_Project_kv",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "gen2key"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Project_kv')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Project_Azure_SQL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_Project_kv",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Project_kv')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Event_Based_Trigger')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "CreditScore_Data",
-						"description": "Calling the data flow which is transforming the Tope most credit score customer records, Duplicate rejected records and all customers data.",
-						"type": "ExecuteDataFlow",
+						"name": "Copy data1",
+						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -1344,33 +1441,169 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DF_TopMost_DuplicatedRejected_AllCleanedData",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"CredtiScoreTableDetails": {},
-									"RejectedDuplicatedRecords": {},
-									"TopMostCreditScoreData": {},
-									"LoadedAllCleanData": {}
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
 								}
 							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
-							"traceLevel": "Fine"
-						}
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Project_ADLSGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"Foldername": {
+										"value": "@pipeline().parameters.pipelinefoldername",
+										"type": "Expression"
+									},
+									"Filename": {
+										"value": "@pipeline().parameters.pipeinefilename",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Project_Azure_SQL_Sink",
+								"type": "DatasetReference",
+								"parameters": {
+									"schemaname": {
+										"value": "@pipeline().parameters.pipelineschemaname",
+										"type": "Expression"
+									},
+									"tablename": {
+										"value": "@pipeline().parameters.pipelinetablename",
+										"type": "Expression"
+									}
+								}
+							}
+						]
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"parameters": {
+					"pipelinefoldername": {
+						"type": "string"
+					},
+					"pipeinefilename": {
+						"type": "string"
+					},
+					"pipelineschemaname": {
+						"type": "string"
+					},
+					"pipelinetablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [
+					"Project"
+				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DF_TopMost_DuplicatedRejected_AllCleanedData')]"
+				"[concat(variables('factoryId'), '/datasets/DS_Project_ADLSGen2')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Project_Azure_SQL_Sink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Project_ADLSGen2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Project_Gen2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Foldername": {
+						"type": "string"
+					},
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().Foldername",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Project_Gen2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Project_Azure_SQL_Sink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Project_Azure_SQL",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schemaname": {
+						"type": "string"
+					},
+					"tablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schemaname",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Project_Azure_SQL')]"
 			]
 		}
 	]
