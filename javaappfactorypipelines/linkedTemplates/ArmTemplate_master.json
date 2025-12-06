@@ -19,37 +19,17 @@
 			"type": "string",
 			"defaultValue": "sqlconnectionstring"
 		},
-		"LS_Project_kv_properties_typeProperties_baseUrl": {
+		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
-			"defaultValue": "https://kv-secrets-data.vault.azure.net/"
+			"defaultValue": "sqlconnectionString"
 		},
 		"LS_Project_Gen2_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://storageaccdataloadtest.dfs.core.windows.net"
 		},
-		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
+		"LS_Project_kv_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "sqlconnectionString"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
-			"type": "string",
-			"defaultValue": "@triggerBody().folderPath"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
-			"type": "string",
-			"defaultValue": "dbo"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
-			"type": "string",
-			"defaultValue": "@triggerBody().tableName"
-		},
-		"EventBasedTrigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/97b7e41b-5696-4069-a341-130144932995/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/storageaccdataloadtest"
+			"defaultValue": "https://kv-secrets-data.vault.azure.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -90,11 +70,11 @@
 					"LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName": {
 						"value": "[parameters('LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName')]"
 					},
-					"LS_Project_Gen2_properties_typeProperties_url": {
-						"value": "[parameters('LS_Project_Gen2_properties_typeProperties_url')]"
-					},
 					"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
 						"value": "[parameters('LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName')]"
+					},
+					"LS_Project_Gen2_properties_typeProperties_url": {
+						"value": "[parameters('LS_Project_Gen2_properties_typeProperties_url')]"
 					}
 				}
 			},
@@ -113,21 +93,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
-						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername')]"
-					},
-					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
-						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename')]"
-					},
-					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
-						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname')]"
-					},
-					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
-						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename')]"
-					},
-					"EventBasedTrigger_properties_typeProperties_scope": {
-						"value": "[parameters('EventBasedTrigger_properties_typeProperties_scope')]"
 					}
 				}
 			},

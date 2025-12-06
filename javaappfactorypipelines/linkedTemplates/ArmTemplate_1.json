@@ -6,32 +6,206 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "javaappfactorypipelines"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
-			"type": "string",
-			"defaultValue": "@triggerBody().folderPath"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
-			"type": "string",
-			"defaultValue": "dbo"
-		},
-		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
-			"type": "string",
-			"defaultValue": "@triggerBody().tableName"
-		},
-		"EventBasedTrigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/97b7e41b-5696-4069-a341-130144932995/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/storageaccdataloadtest"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Full_Load')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM METADATA",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_Lookup_Azure_SQL_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get Metadata1",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "DS_GetMetadataactivity_Source",
+											"type": "DatasetReference",
+											"parameters": {
+												"testschemaname": {
+													"value": "@item().schemaname",
+													"type": "Expression"
+												},
+												"testtablename": {
+													"value": "@item().tablename",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"exists"
+										]
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Get Metadata1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(activity('Get Metadata1').output.exists,true)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Wait1",
+												"type": "Wait",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"waitTimeInSeconds": 60
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Copy data1",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"queryTimeout": "02:00:00",
+														"partitionOption": "None"
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ".txt"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_Copy_Azure_SQL_Source",
+														"type": "DatasetReference",
+														"parameters": {
+															"schemaname": {
+																"value": "@item().schemaname",
+																"type": "Expression"
+															},
+															"tablename": {
+																"value": "@item().tablename",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DS_ADLS_Gen2_Sink",
+														"type": "DatasetReference",
+														"parameters": {
+															"foldername": {
+																"value": "@item().foldername",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Full_Load_exercise')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -672,110 +846,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Event_Based_Trigger')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Project_ADLSGen2",
-								"type": "DatasetReference",
-								"parameters": {
-									"Foldername": {
-										"value": "@pipeline().parameters.pipelinefoldername",
-										"type": "Expression"
-									},
-									"Filename": {
-										"value": "@pipeline().parameters.pipeinefilename",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Project_Azure_SQL_Sink",
-								"type": "DatasetReference",
-								"parameters": {
-									"schemaname": {
-										"value": "@pipeline().parameters.pipelineschemaname",
-										"type": "Expression"
-									},
-									"tablename": {
-										"value": "@pipeline().parameters.pipelinetablename",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"pipelinefoldername": {
-						"type": "string"
-					},
-					"pipeinefilename": {
-						"type": "string"
-					},
-					"pipelineschemaname": {
-						"type": "string"
-					},
-					"pipelinetablename": {
-						"type": "string"
-					}
-				},
-				"annotations": [
-					"Project"
-				]
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PL_WindowsFunctionTransformation')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -869,45 +939,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/DF_Rejected_Duplicate_records_in_seperate_table')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EventBasedTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [
-					"if any file created in storage account then my pipeline automatically should run.",
-					"Ignore empty blobs means--> Even my file is empty still I want to run my pipeline"
-				],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Event_Based_Trigger",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"pipelinefoldername": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername')]",
-							"pipeinefilename": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename')]",
-							"pipelineschemaname": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname')]",
-							"pipelinetablename": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/bronzelayer/blobs/",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('EventBasedTrigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Event_Based_Trigger')]"
 			]
 		}
 	]
