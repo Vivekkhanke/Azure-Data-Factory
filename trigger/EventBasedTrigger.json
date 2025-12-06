@@ -6,20 +6,7 @@
 			"Ignore empty blobs means--> Even my file is empty still I want to run my pipeline"
 		],
 		"runtimeState": "Started",
-		"pipelines": [
-			{
-				"pipelineReference": {
-					"referenceName": "Event_Based_Trigger",
-					"type": "PipelineReference"
-				},
-				"parameters": {
-					"pipelinefoldername": "@triggerBody().folderPath",
-					"pipeinefilename": "@triggerBody().fileName",
-					"pipelineschemaname": "dbo",
-					"pipelinetablename": "@triggerBody().tableName"
-				}
-			}
-		],
+		"pipelines": [],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
 			"blobPathBeginsWith": "/bronzelayer/blobs/",
