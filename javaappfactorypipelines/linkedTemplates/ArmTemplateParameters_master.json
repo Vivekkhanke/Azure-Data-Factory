@@ -23,6 +23,21 @@
 		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
 			"value": "sqlconnectionString"
 		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
+			"value": "@triggerBody().folderPath"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
+			"value": "@triggerBody().fileName"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
+			"value": "dbo"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
+			"value": "@triggerBody().tableName"
+		},
+		"EventBasedTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/97b7e41b-5696-4069-a341-130144932995/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/storageaccdataloadtest"
+		},
 		"containerUri": {
 			"value": ""
 		},

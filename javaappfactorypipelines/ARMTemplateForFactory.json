@@ -30,6 +30,26 @@
 		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "sqlconnectionString"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
+			"type": "string",
+			"defaultValue": "dbo"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
+			"type": "string",
+			"defaultValue": "@triggerBody().tableName"
+		},
+		"EventBasedTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/97b7e41b-5696-4069-a341-130144932995/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/storageaccdataloadtest"
 		}
 	},
 	"variables": {
@@ -1604,6 +1624,45 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_Project_Azure_SQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EventBasedTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [
+					"if any file created in storage account then my pipeline automatically should run.",
+					"Ignore empty blobs means--> Even my file is empty still I want to run my pipeline"
+				],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Event_Based_Trigger",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"pipelinefoldername": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername')]",
+							"pipeinefilename": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename')]",
+							"pipelineschemaname": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname')]",
+							"pipelinetablename": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/bronzelayer/blobs/",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('EventBasedTrigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Event_Based_Trigger')]"
 			]
 		}
 	]

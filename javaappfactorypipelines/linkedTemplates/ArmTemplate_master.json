@@ -31,6 +31,26 @@
 			"type": "string",
 			"defaultValue": "sqlconnectionString"
 		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
+			"type": "string",
+			"defaultValue": "dbo"
+		},
+		"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
+			"type": "string",
+			"defaultValue": "@triggerBody().tableName"
+		},
+		"EventBasedTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/97b7e41b-5696-4069-a341-130144932995/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/storageaccdataloadtest"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -93,6 +113,21 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername": {
+						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinefoldername')]"
+					},
+					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename": {
+						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipeinefilename')]"
+					},
+					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname": {
+						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelineschemaname')]"
+					},
+					"EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename": {
+						"value": "[parameters('EventBasedTrigger_properties_Event_Based_Trigger_parameters_pipelinetablename')]"
+					},
+					"EventBasedTrigger_properties_typeProperties_scope": {
+						"value": "[parameters('EventBasedTrigger_properties_typeProperties_scope')]"
 					}
 				}
 			},
