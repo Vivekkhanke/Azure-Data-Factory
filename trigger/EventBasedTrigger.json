@@ -5,7 +5,7 @@
 			"if any file created in storage account then my pipeline automatically should run.",
 			"Ignore empty blobs means--> Even my file is empty still I want to run my pipeline"
 		],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
