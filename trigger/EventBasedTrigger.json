@@ -27,7 +27,8 @@
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/97b7e41b-5696-4069-a341-130144932995/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/storageaccdataloadtest",
 			"events": [
-				"Microsoft.Storage.BlobCreated"
+				"Microsoft.Storage.BlobCreated",
+				"Microsoft.Storage.BlobDeleted"
 			]
 		}
 	}
