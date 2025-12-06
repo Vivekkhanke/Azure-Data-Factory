@@ -1,0 +1,9 @@
+{
+	"name": "adf-data-ki-factory",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0aa73474-8d14-41e1-9bd7-fc1b63bb8935",
+		"tenantId": "a891e8ab-0ade-4a68-a4ce-6f576fea50bc"
+	}
+}
