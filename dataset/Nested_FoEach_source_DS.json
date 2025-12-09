@@ -1,0 +1,55 @@
+{
+	"name": "Nested_FoEach_source_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Project_Gen2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"dsfolderName": {
+				"type": "string"
+			},
+			"dsFileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().dsFileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().dsfolderName",
+					"type": "Expression"
+				},
+				"fileSystem": "bronzelayer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Credit_ID",
+				"type": "String"
+			},
+			{
+				"name": "Card_Type",
+				"type": "String"
+			},
+			{
+				"name": "Credit_Name",
+				"type": "String"
+			},
+			{
+				"name": "Credit_score",
+				"type": "String"
+			}
+		]
+	}
+}

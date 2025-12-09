@@ -1,0 +1,151 @@
+{
+	"name": "Nested_For_Each_Files_Child_PL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get_Files",
+				"description": "Get Files from Folders which is iterating in master pipeline",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Nested_for_each_files_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"dsFolderName": {
+								"value": "@pipeline().parameters.ppFolderName",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Iterate_Files",
+				"description": "For each activity is going to iterate one by one files from the folders inmaster pipeline",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_Files').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "bronze_to_silver",
+							"description": "Copy data from Bronze to silver",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Nested_FoEach_source_DS",
+									"type": "DatasetReference",
+									"parameters": {
+										"dsfolderName": {
+											"value": "@pipeline().parameters.ppFolderName",
+											"type": "Expression"
+										},
+										"dsFileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Nested_ForEach_Sink_ds",
+									"type": "DatasetReference",
+									"parameters": {
+										"dsFolderName": {
+											"value": "@pipeline().parameters.ppFolderName",
+											"type": "Expression"
+										},
+										"dsFileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"ppFolderName": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}

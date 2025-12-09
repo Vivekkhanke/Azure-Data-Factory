@@ -1,0 +1,38 @@
+{
+	"name": "Nested_ForEach_Sink_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Project_Gen2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"dsFolderName": {
+				"type": "string"
+			},
+			"dsFileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(\r\n    replace(dataset().dsFileName, '.csv', ''),\r\n    '_',\r\n    formatDateTime(utcNow(), 'yyyyMMdd'),\r\n    '.csv'\r\n)\r\n",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().dsFolderName",
+					"type": "Expression"
+				},
+				"fileSystem": "silver"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

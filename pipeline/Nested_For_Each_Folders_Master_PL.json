@@ -1,0 +1,83 @@
+{
+	"name": "Nested_For_Each_Folders_Master_PL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Folders",
+				"description": "Get folders from ADLSGen2 - Bronze container.",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Nested_ForEach_DS",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Iterate_folders",
+				"description": "For each activity is going to iterate one by one folders",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Folders",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Folders').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "call_child_pipeline",
+							"description": "calling child pipeline to iterate items or files inside folders",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Nested_For_Each_Files_Child_PL",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"ppFolderName": {
+										"value": "@item().name",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
