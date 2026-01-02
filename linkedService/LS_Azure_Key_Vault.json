@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureKeyVault",
 		"typeProperties": {
-			"baseUrl": "https://kv-data-engine-secret.vault.azure.net/"
+			"baseUrl": "https://kv-datasecret-dev.vault.azure.net/"
 		}
 	}
 }
