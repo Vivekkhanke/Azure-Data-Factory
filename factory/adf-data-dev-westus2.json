@@ -1,4 +1,9 @@
 {
 	"name": "adf-data-dev-westus2",
-	"location": "westus2"
+	"location": "westus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "61c970da-209c-45e7-9d91-c9e1dee463b4",
+		"tenantId": "f7cff359-b1c4-437c-a924-f47ba7169d02"
+	}
 }
