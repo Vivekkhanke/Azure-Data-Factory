@@ -1,3 +1,11 @@
+--download azure cli
+
+az login
+az account set --subscription "<id>"
+terraform init
+terraform plan
+terraform apply
+-----------------------------------------------------------------------------
 ** Key vault secret insertion **
 
 az keyvault secret set --vault-name kv-datasecret-dev --name gen2key --value ""
