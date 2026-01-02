@@ -1,0 +1,16 @@
+** Key vault secret insertion **
+
+az keyvault secret set --vault-name kv-datasecret-dev --name gen2key --value ""
+az keyvault secret set --vault-name kv-datasecret-dev --name sqlconnectionString --value ""
+
+
+*** Give access to datafactory and key vault ***
+ 
+az config set extension.use_dynamic_install=yes_without_prompt
+az config set extension.dynamic_install_allow_preview=true
+
+**--below command to show object id --**
+
+az datafactory show --name adf-data-dev-westus2 --resource-group rg-dataeng-dev-westUs2 --query identity.principalId -o tsv
+az keyvault set-policy --name kv-datasecret-dev --object-id <object id> --secret-permissions get li
+ 
