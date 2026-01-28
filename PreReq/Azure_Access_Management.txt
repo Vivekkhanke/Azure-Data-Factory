@@ -19,6 +19,6 @@ az config set extension.dynamic_install_allow_preview=true
 
 **--below command to show object id --**
 
-az datafactory show --name adf-data-dev-westus2 --resource-group rg-dataeng-dev-westUs2 --query identity.principalId -o tsv
-az keyvault set-policy --name kv-datasecret-dev --object-id <object id> --secret-permissions get li
+az datafactory show --name adf-data-dev-eus2 --resource-group rg-dataeng-dev-eus2 --query identity.principalId -o tsv
+az keyvault set-policy --name kv-dataeng-dev-eus2 --object-id <object id> --secret-permissions get li
  
