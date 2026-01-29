@@ -24,3 +24,4 @@ az keyvault set-policy --name kv-dataeng-dev-eus2 --object-id <object id> --secr
 
 --create container in ADLSGen2
 az storage container create --name bronze --account-name dataengeus2dev --auth-mode login
+az storage container create --name bronzelayer --account-name dataengeus2dev --auth-mode login
