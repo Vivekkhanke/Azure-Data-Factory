@@ -21,4 +21,6 @@ az config set extension.dynamic_install_allow_preview=true
 
 az datafactory show --name adf-data-dev-eus2 --resource-group rg-dataeng-dev-eus2 --query identity.principalId -o tsv
 az keyvault set-policy --name kv-dataeng-dev-eus2 --object-id <object id> --secret-permissions get li
- 
+
+--create container in ADLSGen2
+az storage container create --name bronze --account-name dataengeus2dev --auth-mode login
