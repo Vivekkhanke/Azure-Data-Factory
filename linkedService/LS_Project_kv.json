@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureKeyVault",
 		"typeProperties": {
-			"baseUrl": "https://kv-dataeng-dev-eus2.vault.azure.net/"
+			"baseUrl": "https://kv-np2kw.vault.azure.net/"
 		}
 	}
 }
