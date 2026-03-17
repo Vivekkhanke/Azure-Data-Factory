@@ -4,11 +4,11 @@
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://dataengeus2dev.dfs.core.windows.net",
+			"url": "https://stdataengnp2kw.dfs.core.windows.net",
 			"accountKey": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "LS_Project_kv",
+					"referenceName": "LS_Azure_Key_Vault",
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "gen2key"
