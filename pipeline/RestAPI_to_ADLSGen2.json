@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
+				"name": "Rest Api Data",
 				"type": "ForEach",
 				"dependsOn": [],
 				"userProperties": [],
@@ -35,12 +35,45 @@
 										"supportRFC5988": "true"
 									}
 								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
 									"referenceName": "DS_RestAPI_source",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"BaseURL": {
+											"value": "@pipeline().parameters.pp_BaseURL",
+											"type": "Expression"
+										},
+										"id": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_RestAPI_Gen2_Sink",
+									"type": "DatasetReference",
+									"parameters": {
+										"dsdink": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
@@ -48,6 +81,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"pp_BaseURL": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
