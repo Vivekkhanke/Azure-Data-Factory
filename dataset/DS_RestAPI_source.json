@@ -3,10 +3,30 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "RestAPI",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"BaseURL": {
+					"value": "@dataset().BaseURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"BaseURL": {
+				"type": "string"
+			},
+			"id": {
+				"type": "string"
+			}
 		},
 		"annotations": [],
 		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().id",
+				"type": "Expression"
+			}
+		},
 		"schema": []
 	}
 }
