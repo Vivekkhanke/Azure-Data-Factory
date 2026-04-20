@@ -1,12 +1,19 @@
 {
 	"name": "RestAPItoADLSGen2",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://stdataengnp2kw.dfs.core.windows.net/",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDA0Q0Q5MzU3LTJGNUUtNDM1My05ODgwLUMwOEI4QTVGNDdGQV81NzEzNTRjMC03MDRjLTRjMWItYjY5ZS1hM2MzM2QyYWQxYzkiDQp9"
+			"url": "https://stdatalakeprodeus2.dfs.core.windows.net/",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_Azure_Key_Vault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "gen2key"
+			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
