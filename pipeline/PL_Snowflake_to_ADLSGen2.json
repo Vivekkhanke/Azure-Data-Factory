@@ -37,7 +37,8 @@
 						"linkedServiceName": {
 							"referenceName": "LS_Blob_Snow",
 							"type": "LinkedServiceReference"
-						}
+						},
+						"path": "bronze"
 					},
 					"translator": {
 						"type": "TabularTranslator",
