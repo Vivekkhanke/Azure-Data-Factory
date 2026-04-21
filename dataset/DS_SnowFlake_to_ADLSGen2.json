@@ -10,6 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "employees_snowflake",
+				"folderPath": "employees",
 				"fileSystem": "snowflake"
 			},
 			"columnDelimiter": ",",
