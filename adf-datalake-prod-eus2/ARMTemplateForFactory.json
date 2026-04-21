@@ -11,10 +11,6 @@
 			"type": "string",
 			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net"
 		},
-		"LS_Akv_SnowFlake_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net"
-		},
 		"LS_Azure_Key_Vault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net/"
@@ -1844,19 +1840,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_Key_Vault')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_Akv_SnowFlake')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('LS_Akv_SnowFlake_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/LS_Azure_Key_Vault')]",
