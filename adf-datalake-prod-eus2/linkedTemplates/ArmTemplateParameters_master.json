@@ -38,6 +38,12 @@
 		"LS_Blob_Snow_properties_typeProperties_sasToken_secretName": {
 			"value": "sas-token"
 		},
+		"LS_ADLSGen2_Snow_properties_typeProperties_url": {
+			"value": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"LS_Snowflake_properties_typeProperties_database": {
+			"value": "sampledb"
+		},
 		"containerUri": {
 			"value": ""
 		},

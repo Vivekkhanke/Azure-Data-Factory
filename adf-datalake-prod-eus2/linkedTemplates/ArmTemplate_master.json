@@ -51,6 +51,14 @@
 			"type": "string",
 			"defaultValue": "sas-token"
 		},
+		"LS_ADLSGen2_Snow_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"LS_Snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampledb"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -110,6 +118,12 @@
 					},
 					"LS_Blob_Snow_properties_typeProperties_sasToken_secretName": {
 						"value": "[parameters('LS_Blob_Snow_properties_typeProperties_sasToken_secretName')]"
+					},
+					"LS_ADLSGen2_Snow_properties_typeProperties_url": {
+						"value": "[parameters('LS_ADLSGen2_Snow_properties_typeProperties_url')]"
+					},
+					"LS_Snowflake_properties_typeProperties_database": {
+						"value": "[parameters('LS_Snowflake_properties_typeProperties_database')]"
 					}
 				}
 			},

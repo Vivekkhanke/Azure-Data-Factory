@@ -50,6 +50,14 @@
 		"LS_Blob_Snow_properties_typeProperties_sasToken_secretName": {
 			"type": "string",
 			"defaultValue": "sas-token"
+		},
+		"LS_ADLSGen2_Snow_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"LS_Snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sampledb"
 		}
 	},
 	"variables": {
@@ -2340,6 +2348,58 @@
 						"secretName": "[parameters('LS_Blob_Snow_properties_typeProperties_sasToken_secretName')]"
 					}
 				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_akv_Snow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_ADLSGen2_Snow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_ADLSGen2_Snow_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_akv_Snow",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "gen2key"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_akv_Snow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SnowflakeV2",
+				"typeProperties": {
+					"authenticationType": "Basic",
+					"accountIdentifier": "wrwzlpw-if82916",
+					"user": "VIVEKKHANKE",
+					"database": "[parameters('LS_Snowflake_properties_typeProperties_database')]",
+					"warehouse": "COMPUTE_WH",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_akv_Snow",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "snow-pass"
+					},
+					"useUtcTimestamps": false
+				},
+				"version": "1.1"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_akv_Snow')]"
