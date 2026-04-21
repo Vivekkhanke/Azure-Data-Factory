@@ -1,0 +1,9 @@
+{
+	"name": "adf-np2kw",
+	"location": "westus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a9451586-a90f-4b2c-ad6c-5cb8f8b0549b",
+		"tenantId": "837a37d3-01b0-4b20-84f3-c2d447ee0b82"
+	}
+}
