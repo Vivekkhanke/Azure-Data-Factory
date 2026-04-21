@@ -42,6 +42,14 @@
 		"LS_akv_Snow_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
+		"LS_Blob_Snow_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'LS_Blob_Snow'"
+		},
+		"LS_Blob_Snow_properties_typeProperties_sasToken_secretName": {
+			"type": "string",
+			"defaultValue": "sas-token"
 		}
 	},
 	"variables": {
@@ -2313,6 +2321,29 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Blob_Snow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('LS_Blob_Snow_sasUri')]",
+					"sasToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_akv_Snow",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('LS_Blob_Snow_properties_typeProperties_sasToken_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_akv_Snow')]"
+			]
 		}
 	]
 }

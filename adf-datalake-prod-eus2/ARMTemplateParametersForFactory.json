@@ -31,6 +31,12 @@
 		},
 		"LS_akv_Snow_properties_typeProperties_baseUrl": {
 			"value": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
+		"LS_Blob_Snow_sasUri": {
+			"value": ""
+		},
+		"LS_Blob_Snow_properties_typeProperties_sasToken_secretName": {
+			"value": "sas-token"
 		}
 	}
 }

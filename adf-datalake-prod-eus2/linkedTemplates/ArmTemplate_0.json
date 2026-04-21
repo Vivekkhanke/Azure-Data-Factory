@@ -42,6 +42,14 @@
 		"RestAPItoADLSGen2_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"LS_Blob_Snow_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'LS_Blob_Snow'"
+		},
+		"LS_Blob_Snow_properties_typeProperties_sasToken_secretName": {
+			"type": "string",
+			"defaultValue": "sas-token"
 		}
 	},
 	"variables": {
@@ -265,6 +273,29 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_Key_Vault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Blob_Snow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('LS_Blob_Snow_sasUri')]",
+					"sasToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_akv_Snow",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('LS_Blob_Snow_properties_typeProperties_sasToken_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_akv_Snow')]"
 			]
 		},
 		{
@@ -497,24 +528,6 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DS_Inc_Load_Azure_SQL_Copy')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Azure_SQL_Source",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL_Source')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Inc_Load_Lookup_max_SQL')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
