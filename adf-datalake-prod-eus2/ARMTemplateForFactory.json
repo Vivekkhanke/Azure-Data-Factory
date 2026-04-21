@@ -38,6 +38,10 @@
 		"RestAPItoADLSGen2_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"LS_akv_Snow_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -2296,6 +2300,19 @@
 				"[concat(variables('factoryId'), '/datasets/DS_AzureSQL_Sink_TopMost')]",
 				"[concat(variables('factoryId'), '/datasets/DS_Azure_SQL_Sink_All_Cust_Records')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_akv_Snow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LS_akv_Snow_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

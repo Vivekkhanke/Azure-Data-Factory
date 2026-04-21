@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
 		},
+		"LS_akv_Snow_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -74,6 +78,9 @@
 					},
 					"RestAPI_properties_typeProperties_url": {
 						"value": "[parameters('RestAPI_properties_typeProperties_url')]"
+					},
+					"LS_akv_Snow_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_akv_Snow_properties_typeProperties_baseUrl')]"
 					},
 					"LS_ADLSGen2_Sink_properties_typeProperties_url": {
 						"value": "[parameters('LS_ADLSGen2_Sink_properties_typeProperties_url')]"
