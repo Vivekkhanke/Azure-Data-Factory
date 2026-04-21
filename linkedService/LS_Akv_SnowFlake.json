@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureKeyVault",
 		"typeProperties": {
-			"baseUrl": "https://akv-data-prod-eus2.vault.azure.net/"
+			"baseUrl": "https://akv-data-prod-eus2.vault.azure.net"
 		}
 	}
 }
