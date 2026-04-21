@@ -1,0 +1,17 @@
+{
+	"name": "LS_Blob_Snow",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_Akv_SnowFlake",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sas-url"
+			}
+		}
+	}
+}
