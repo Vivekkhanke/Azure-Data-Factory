@@ -1,0 +1,18 @@
+{
+	"name": "LS_ADLSGen2_Snow",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://stdatalakeprodeus2.dfs.core.windows.net/",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_akv_Snow",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "gen2key"
+			}
+		}
+	}
+}
