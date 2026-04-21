@@ -1,0 +1,125 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-datalake-prod-eus2"
+		},
+		"LS_ADLSGen2_Sink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net"
+		},
+		"LS_Akv_SnowFlake_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net"
+		},
+		"LS_Azure_Key_Vault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
+		"LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "sqlconnectionstring"
+		},
+		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "sqlconnectionString"
+		},
+		"LS_Project_Gen2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net"
+		},
+		"LS_Project_kv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
+		"RestAPI_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().BaseURL}"
+		},
+		"RestAPItoADLSGen2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adf-datalake-prod-eus2_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_Akv_SnowFlake_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_Akv_SnowFlake_properties_typeProperties_baseUrl')]"
+					},
+					"LS_Azure_Key_Vault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_Azure_Key_Vault_properties_typeProperties_baseUrl')]"
+					},
+					"LS_Project_kv_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_Project_kv_properties_typeProperties_baseUrl')]"
+					},
+					"RestAPI_properties_typeProperties_url": {
+						"value": "[parameters('RestAPI_properties_typeProperties_url')]"
+					},
+					"LS_ADLSGen2_Sink_properties_typeProperties_url": {
+						"value": "[parameters('LS_ADLSGen2_Sink_properties_typeProperties_url')]"
+					},
+					"LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName')]"
+					},
+					"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName')]"
+					},
+					"LS_Project_Gen2_properties_typeProperties_url": {
+						"value": "[parameters('LS_Project_Gen2_properties_typeProperties_url')]"
+					},
+					"RestAPItoADLSGen2_properties_typeProperties_url": {
+						"value": "[parameters('RestAPItoADLSGen2_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adf-datalake-prod-eus2_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-datalake-prod-eus2_ArmTemplate_0')]"
+			]
+		}
+	]
+}

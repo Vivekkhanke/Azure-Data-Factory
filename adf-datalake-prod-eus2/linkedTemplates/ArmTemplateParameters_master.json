@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-datalake-prod-eus2"
+		},
+		"LS_ADLSGen2_Sink_properties_typeProperties_url": {
+			"value": "https://stdatalakeprodeus2.dfs.core.windows.net"
+		},
+		"LS_Akv_SnowFlake_properties_typeProperties_baseUrl": {
+			"value": "https://akv-data-prod-eus2.vault.azure.net"
+		},
+		"LS_Azure_Key_Vault_properties_typeProperties_baseUrl": {
+			"value": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
+		"LS_Azure_SQL_Source_properties_typeProperties_connectionString_secretName": {
+			"value": "sqlconnectionstring"
+		},
+		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
+			"value": "sqlconnectionString"
+		},
+		"LS_Project_Gen2_properties_typeProperties_url": {
+			"value": "https://stdatalakeprodeus2.dfs.core.windows.net"
+		},
+		"LS_Project_kv_properties_typeProperties_baseUrl": {
+			"value": "https://akv-data-prod-eus2.vault.azure.net/"
+		},
+		"RestAPI_properties_typeProperties_url": {
+			"value": "@{linkedService().BaseURL}"
+		},
+		"RestAPItoADLSGen2_properties_typeProperties_url": {
+			"value": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
