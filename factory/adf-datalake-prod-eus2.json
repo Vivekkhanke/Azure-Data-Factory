@@ -1,0 +1,9 @@
+{
+	"name": "adf-datalake-prod-eus2",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "833fb008-a9c1-4b12-bced-a9d1e0b58e82",
+		"tenantId": "c1476015-b5eb-4b8e-a2c9-29ff7ede8eca"
+	}
+}
