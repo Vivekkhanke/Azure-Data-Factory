@@ -1,0 +1,19 @@
+{
+	"name": "LS_Blob_Snow",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": "https://stdatalakeprodeus2.blob.core.windows.net/",
+			"sasToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_akv_Snow",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sas-token"
+			}
+		}
+	}
+}
