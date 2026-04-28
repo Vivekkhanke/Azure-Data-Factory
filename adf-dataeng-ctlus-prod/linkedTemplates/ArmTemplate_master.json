@@ -33,11 +33,11 @@
 		},
 		"LS_Project_Azure_SQL_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
-			"defaultValue": "sqlconnectionString"
+			"defaultValue": "connectionString"
 		},
 		"LS_Project_Gen2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net"
+			"defaultValue": "https://stgdataengaccountctlus.dfs.core.windows.net"
 		},
 		"LS_Project_kv_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -57,7 +57,7 @@
 		},
 		"RestAPItoADLSGen2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://stdatalakeprodeus2.dfs.core.windows.net/"
+			"defaultValue": "https://stgdataengaccountctlus.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
