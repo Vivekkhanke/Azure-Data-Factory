@@ -10,7 +10,7 @@
 					"referenceName": "LS_Azure_Key_Vault",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "sqlconnectionstring"
+				"secretName": "connectionstring"
 			}
 		}
 	}
