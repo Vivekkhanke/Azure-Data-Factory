@@ -10,7 +10,7 @@
 					"referenceName": "LS_Project_kv",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "sqlconnectionString"
+				"secretName": "connectionString"
 			}
 		}
 	}
