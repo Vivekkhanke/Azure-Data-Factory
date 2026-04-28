@@ -5,7 +5,7 @@
 		"annotations": [],
 		"type": "AzureBlobStorage",
 		"typeProperties": {
-			"sasUri": "https://stdatalakeprodeus2.blob.core.windows.net/",
+			"sasUri": "https://stgdataengaccountctlus.blob.core.windows.net/",
 			"sasToken": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
