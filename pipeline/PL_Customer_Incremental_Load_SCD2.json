@@ -1,0 +1,164 @@
+{
+	"name": "PL_Customer_Incremental_Load_SCD2",
+	"properties": {
+		"description": "INCREMENTAL LOAD PIPELINE\n\nADF will load : \nOld Watermark < LastModifiedDate <= New Watermark\n\nLookup Old Watermark\n          ↓\nLookup New Watermark\n          ↓\nCopy Incremental Data\n          ↓\nUpdate Watermark",
+		"activities": [
+			{
+				"name": "Lookup_Old_Watermark",
+				"description": "Old Watermark\n      ↓\n1900-01-01",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT LastWatermarkValue\nFROM WatermarkTable\nWHERE TableName = 'Customer';",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Customer_SCD2",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Lookup_New_Watermark",
+				"description": "New Watermark\n      ↓\n2026-10-02 10:00:00",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Old_Watermark",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT MAX(LastModifiedDate) AS NewWatermark\nFROM Customer;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Customer_SCD2",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Copy_Customer_Incremental",
+				"description": "Lookup_Old_Watermark\n       ↓\nCopy Activity\n       ↓\nADLS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Lookup_New_Watermark",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT\n    CustomerID,\n    CustomerName,\n    City,\n    Salary,\n    LastModifiedDate\nFROM Customer\nWHERE LastModifiedDate >\n      '@{activity('Lookup_Old_Watermark').output.firstRow.LastWatermarkValue}'\nAND LastModifiedDate <=\n      '@{activity('Lookup_New_Watermark').output.firstRow.NewWatermark}';",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SQL_Customer_SCD2",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_ADLS_Customer_Raw_SCD2",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Update_Watermark",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy_Customer_Incremental",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[UpdateWatermark]",
+					"storedProcedureParameters": {
+						"TableName": {
+							"value": "TableName",
+							"type": "String"
+						},
+						"NewWatermark": {
+							"value": "@activity('Lookup_New_Watermark').output.firstRow.NewWatermark",
+							"type": "Datetime"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQL_SCD2",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

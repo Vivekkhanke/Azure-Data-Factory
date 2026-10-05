@@ -1,0 +1,21 @@
+{
+	"name": "DS_ADLS_Customer_Raw_SCD2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_SCD2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "customer_@{formatDateTime(utcnow(),'yyyyMMddHHmmss')}.parquet",
+				"folderPath": "customer",
+				"fileSystem": "raw"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
