@@ -1,3 +1,5 @@
+az login
+
 1️⃣ Get Subscription ID
 az account show --query id -o tsv
 
