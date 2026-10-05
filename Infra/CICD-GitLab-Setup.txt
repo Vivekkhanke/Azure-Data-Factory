@@ -1,0 +1,15 @@
+1️⃣ Get Subscription ID
+az account show --query id -o tsv
+
+2️⃣ Create Service Principal
+Replace SUBSCRIPTION_ID:
+az ad sp create-for-rbac --name gitlab-terraform-sp --role Contributor --scopes /subscriptions/SUBSCRIPTION_ID
+
+3️⃣ Check the Service Principal
+az ad sp list --display-name gitlab-terraform-sp --query "[].{Name:displayName,AppId:appId}" -o table
+
+4️⃣ Your GitLab variables
+ARM_CLIENT_ID       = appId
+ARM_CLIENT_SECRET   = password
+ARM_TENANT_ID       = tenant
+ARM_SUBSCRIPTION_ID = subscription ID
